@@ -16,8 +16,10 @@ class MemoryEnv(MiniGridEnv):
         seed,
         size=8,
         random_length=False,
+        fixed_start=False,
     ):
         self.random_length = random_length
+        self.fixed_start = fixed_start
         super().__init__(
             seed=seed,
             grid_size=size,
@@ -62,7 +64,10 @@ class MemoryEnv(MiniGridEnv):
             self.grid.set(hallway_end + 2, j, Wall())
 
         # Fix the player's start position and orientation
-        self.agent_pos = (self._rand_int(1, hallway_end + 1), height // 2)
+        if self.fixed_start:
+            self.agent_pos = (1, height // 2)
+        else:
+            self.agent_pos = (self._rand_int(1, hallway_end + 1), height // 2)
         self.agent_dir = 0
 
         # Place objects
@@ -152,3 +157,13 @@ register(
     id='MiniGrid-MemoryS7-v0',
     entry_point='gym_minigrid.envs:MemoryS7',
 )
+
+class MemoryS7FixedStart(MemoryEnv):
+    def __init__(self, seed=None):
+        super().__init__(seed=seed, size=7, fixed_start=True)
+
+register(
+    id='MiniGrid-MemoryS7FixedStart-v0',
+    entry_point='gym_minigrid.envs:MemoryS7FixedStart',
+)
+
