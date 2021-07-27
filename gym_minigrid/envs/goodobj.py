@@ -25,10 +25,12 @@ class GoodObjectEnv(MiniGridEnv):
         numObjs=50,
         agent_start_pos=(1,1),
         agent_start_dir=0,
+        step_penalty=0.0,
     ):
         self.numObjs = numObjs
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
+        self.step_penalty = step_penalty
 
         super().__init__(
             grid_size=size,
@@ -78,6 +80,8 @@ class GoodObjectEnv(MiniGridEnv):
             self.grid.grid[self.agent_pos[1] * self.grid.width + self.agent_pos[0]] = None
             reward = front_cell.reward
 
+        reward -= self.step_penalty
+
         if reward > 0:
             self.pos_cnt += 1
 
@@ -94,6 +98,14 @@ class GoodObjectRandomEnv16x16(GoodObjectEnv):
     def __init__(self, **kwargs):
         super().__init__(size=16, agent_start_pos=None)
 
+class GoodObjectEnvWithPenalty16x16(GoodObjectEnv):
+    def __init__(self, **kwargs):
+        super().__init__(size=16, step_penalty=0.05, **kwargs)
+
+class GoodObjectRandomEnvWithPenalty16x16(GoodObjectEnv):
+    def __init__(self, **kwargs):
+        super().__init__(size=16, step_penalty=0.05, agent_start_pos=None)
+
 register(
     id='MiniGrid-GoodObject-16x16-v0',
     entry_point='gym_minigrid.envs:GoodObjectEnv16x16'
@@ -102,6 +114,16 @@ register(
 register(
     id='MiniGrid-GoodObject-Random-16x16-v0',
     entry_point='gym_minigrid.envs:GoodObjectRandomEnv16x16'
+)
+
+register(
+    id='MiniGrid-GoodObject-Penalty-16x16-v0',
+    entry_point='gym_minigrid.envs:GoodObjectEnvWithPenalty16x16'
+)
+
+register(
+    id='MiniGrid-GoodObject-Random-Penalty-16x16-v0',
+    entry_point='gym_minigrid.envs:GoodObjectRandomEnvWithPenalty16x16'
 )
 
 
