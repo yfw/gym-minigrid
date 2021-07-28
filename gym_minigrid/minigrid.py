@@ -47,6 +47,7 @@ OBJECT_TO_IDX = {
     'goal'          : 8,
     'lava'          : 9,
     'agent'         : 10,
+    'invisible'     : 11,
 }
 
 IDX_TO_OBJECT = dict(zip(OBJECT_TO_IDX.values(), OBJECT_TO_IDX.keys()))
@@ -132,6 +133,8 @@ class WorldObj:
             v = Floor(color)
         elif obj_type == 'ball':
             v = Ball(color)
+        elif obj_type == 'invisible':
+            v = Invisible(color)
         elif obj_type == 'key':
             v = Key(color)
         elif obj_type == 'box':
@@ -302,6 +305,21 @@ class Ball(WorldObj):
 
     def render(self, img):
         fill_coords(img, point_in_circle(0.5, 0.5, 0.31), COLORS[self.color])
+
+class Invisible(WorldObj):
+    def __init__(self, reward):
+        super().__init__('invisible', 'green')
+        self.reward = reward
+
+    def can_pickup(self):
+        return True
+
+    def can_overlap(self):
+        return True
+
+    def render(self, img):
+        # invisible
+        pass
 
 class Box(WorldObj):
     def __init__(self, color, contains=None):

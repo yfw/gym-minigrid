@@ -126,4 +126,3 @@ register(
     entry_point='gym_minigrid.envs:GoodObjectRandomEnvWithPenalty16x16'
 )
 
-
