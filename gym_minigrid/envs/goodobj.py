@@ -1,17 +1,6 @@
 from gym_minigrid.minigrid import *
 from gym_minigrid.register import register
 
-class CollectableBall(Ball):
-    def __init__(self, color, reward):
-        super().__init__(color)
-        self.reward = reward
-
-    def can_pickup(self):
-        return True
-
-    def can_overlap(self):
-        return True
-
 
 class GoodObjectEnv(MiniGridEnv):
     """

@@ -14,9 +14,11 @@ class WatermazeEnv(MiniGridEnv):
         size=5,
         agent_start_pos=(1,1),
         agent_start_dir=0,
+        initially_visible=False,
     ):
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir
+        self.initially_visible = initially_visible
         super().__init__(
             grid_size=size,
             max_steps=1000,
@@ -43,7 +45,10 @@ class WatermazeEnv(MiniGridEnv):
         self.grid.set(width // 2, height-1, Door('yellow'))
 
         # Place Invisible with reward
-        obj = Invisible(1)
+        if self.initially_visible:
+            obj = CollectableBall('green', 1)
+        else:
+            obj = Invisible(1)
         self.place_obj(obj)
 
         # Place agent
@@ -56,7 +61,9 @@ class WatermazeEnv(MiniGridEnv):
 
         # Check if we found the hidden reward
         curr_cell = self.grid.get(*self.agent_pos)
-        if curr_cell and curr_cell.type == 'invisible':
+        if curr_cell and (curr_cell.type == 'invisible' or curr_cell.type == 'ball'):
+            obj = Invisible(1)
+            self.grid.grid[self.agent_pos[1] * self.grid.width + self.agent_pos[0]] = obj
             reward = curr_cell.reward
             self._reset_agent()
 
@@ -66,9 +73,17 @@ class WatermazeEnv9x9(WatermazeEnv):
     def __init__(self, **kwargs):
         super().__init__(size=9, **kwargs)
 
+class WatermazeInitiallyVisibleEnv9x9(WatermazeEnv):
+    def __init__(self, **kwargs):
+        super().__init__(size=9, initially_visible=True, **kwargs)
+
 class WatermazeRandomEnv9x9(WatermazeEnv):
     def __init__(self, **kwargs):
         super().__init__(size=9, agent_start_pos=None)
+
+class WatermazeRandomInitiallyVisibleEnv9x9(WatermazeEnv):
+    def __init__(self, **kwargs):
+        super().__init__(size=9, agent_start_pos=None, initially_visible=True)
 
 register(
     id='MiniGrid-Watermaze-9x9-v0',
@@ -78,5 +93,15 @@ register(
 register(
     id='MiniGrid-Watermaze-Random-9x9-v0',
     entry_point='gym_minigrid.envs:WatermazeRandomEnv9x9'
+)
+
+register(
+    id='MiniGrid-Watermaze-InitiallyVisible-9x9-v0',
+    entry_point='gym_minigrid.envs:WatermazeInitiallyVisibleEnv9x9'
+)
+
+register(
+    id='MiniGrid-Watermaze-Random-InitiallyVisible-9x9-v0',
+    entry_point='gym_minigrid.envs:WatermazeRandomInitiallyVisibleEnv9x9'
 )
 

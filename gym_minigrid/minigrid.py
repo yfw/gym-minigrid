@@ -321,6 +321,18 @@ class Invisible(WorldObj):
         # invisible
         pass
 
+class CollectableBall(Ball):
+    def __init__(self, color, reward):
+        super().__init__(color)
+        self.reward = reward
+
+    def can_pickup(self):
+        return True
+
+    def can_overlap(self):
+        return True
+
+
 class Box(WorldObj):
     def __init__(self, color, contains=None):
         super(Box, self).__init__('box', color)
